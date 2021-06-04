@@ -6,6 +6,9 @@
   "repository": "git@github.com:terenceodonoghue/slack-haikubot.git",
   "author": "Terence O'Donoghue <1697905+terenceodonoghue@users.noreply.github.com>",
   "license": "MIT",
+  "engines": {
+    "node": "14.x"
+  },
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js"
