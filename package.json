@@ -1,0 +1,20 @@
+{
+  "name": "slack-haikubot",
+  "version": "0.0.0",
+  "description": "I detect haikus",
+  "main": "index.js",
+  "repository": "git@github.com:terenceodonoghue/slack-haikubot.git",
+  "author": "Terence O'Donoghue <1697905+terenceodonoghue@users.noreply.github.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@slack/bolt": "^3.4.0",
+    "dotenv-safe": "^8.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
