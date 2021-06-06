@@ -131,8 +131,6 @@ class SyllablesArray extends Array {
         while (text.length > 0 && line.syllables < line.maxLength) {
           line.push(text.shift());
         }
-
-        line.syllables === line.maxLength;
       });
 
       const isHaiku =
