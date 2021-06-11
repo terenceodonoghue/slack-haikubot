@@ -1,40 +1,11 @@
 require('dotenv-safe').config();
-const {
+import {
   DynamoDBClient,
   GetItemCommand,
   PutItemCommand,
-} = require('@aws-sdk/client-dynamodb');
-const { App } = require('@slack/bolt');
-
-const getSyllables = (word) => {
-  word = word.toLowerCase();
-  if (word.length <= 3) {
-    return 1;
-  }
-  word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
-  word = word.replace(/^y/, '');
-  return word.match(/[aeiouy]{1,2}/g).length;
-};
-
-class SyllablesArray extends Array {
-  constructor(maxLength) {
-    super();
-    if (Number.isInteger(maxLength)) {
-      this.maxLength = maxLength;
-    }
-  }
-
-  get syllables() {
-    return this.reduce(
-      (accumulator, currentValue) => accumulator + getSyllables(currentValue),
-      0,
-    );
-  }
-
-  isValid() {
-    return this.syllables === this.maxLength;
-  }
-}
+} from '@aws-sdk/client-dynamodb';
+import { App, SlackEventMiddlewareArgs } from '@slack/bolt';
+import { Haiku } from './classes';
 
 (async () => {
   const client = new DynamoDBClient({ region: process.env.AWS_DEFAULT_REGION });
@@ -60,7 +31,7 @@ class SyllablesArray extends Array {
               },
             });
 
-            return await client.send(command);
+            await client.send(command);
           }
           if (installation.team !== undefined) {
             const command = new PutItemCommand({
@@ -71,7 +42,7 @@ class SyllablesArray extends Array {
               },
             });
 
-            return await client.send(command);
+            await client.send(command);
           }
         } catch {
           throw new Error(
@@ -95,7 +66,9 @@ class SyllablesArray extends Array {
 
             const { Item } = await client.send(command);
 
-            return JSON.parse(Item.installation.S);
+            if (Item?.installation.S) {
+              return JSON.parse(Item?.installation.S);
+            }
           }
           if (installQuery.teamId !== undefined) {
             const command = new GetItemCommand({
@@ -108,7 +81,9 @@ class SyllablesArray extends Array {
 
             const { Item } = await client.send(command);
 
-            return JSON.parse(Item.installation.S);
+            if (Item?.installation.S) {
+              return JSON.parse(Item?.installation.S);
+            }
           }
         } catch {
           throw new Error('Failed fetching installation');
@@ -118,37 +93,21 @@ class SyllablesArray extends Array {
   });
 
   app.event('message', async ({ message, say }) => {
-    const text = SyllablesArray.from(message.text.split(' '));
+    // @ts-ignore
+    if (Haiku.validate(message.text)) {
+      // @ts-ignore
+      const haiku = new Haiku(message.text, message.user);
 
-    if (text.syllables === 17) {
-      const haiku = [
-        new SyllablesArray(5),
-        new SyllablesArray(7),
-        new SyllablesArray(5),
-      ];
+      console.log(haiku.toString());
 
-      haiku.forEach((line) => {
-        while (text.length > 0 && line.syllables < line.maxLength) {
-          line.push(text.shift());
-        }
-      });
-
-      const isHaiku =
-        text.length === 0 &&
-        haiku.filter((line) => !line.isValid()).length === 0;
-
-      if (isHaiku) {
-        const [firstLine, secondLine, thirdLine] = haiku.map((line) =>
-          line.join(' '),
-        );
-
-        await say(
-          `_${firstLine}_\n_${secondLine}_\n_${thirdLine}_\n- <@${message.user}>`,
-        );
+      if (haiku.isValid()) {
+        await say(haiku.toString());
       }
     }
   });
 
-  await app.start(process.env.PORT || 3000);
+  const port = process.env.PORT ? Number.parseInt(process.env.PORT) : 3000;
+
+  await app.start(port);
   console.log('⚡️ Bolt app is running!');
 })();
