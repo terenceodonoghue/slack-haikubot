@@ -5,6 +5,7 @@ const MAX_SYLLABLE_LENGTH = 17;
 
 class Haiku {
   private _author: string;
+
   private _phrases: Phrase[];
 
   constructor(message: string, author: string) {
@@ -28,10 +29,10 @@ class Haiku {
     });
   }
 
-  public isValid = () =>
+  public isValid = (): boolean =>
     !this._phrases.filter((phrase) => !phrase.isValid()).length;
 
-  public toString = () => {
+  public toString = (): string => {
     const [firstLine, secondLine, thirdLine] = this._phrases.map((phrase) =>
       phrase.toString(),
     );
@@ -39,7 +40,7 @@ class Haiku {
     return `_${firstLine}_\n_${secondLine}_\n_${thirdLine}_\n- <@${this._author}>`;
   };
 
-  public static validate = (message: string) =>
+  public static validate = (message: string): boolean =>
     syllables(message) === MAX_SYLLABLE_LENGTH;
 }
 

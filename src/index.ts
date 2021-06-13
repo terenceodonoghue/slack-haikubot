@@ -1,11 +1,13 @@
-require('dotenv-safe').config();
 import {
   DynamoDBClient,
   GetItemCommand,
   PutItemCommand,
 } from '@aws-sdk/client-dynamodb';
-import { App, SlackEventMiddlewareArgs } from '@slack/bolt';
+import { App } from '@slack/bolt';
+import * as dotenv from 'dotenv-safe';
 import { Haiku } from './classes';
+
+dotenv.config();
 
 (async () => {
   const client = new DynamoDBClient({ region: process.env.AWS_DEFAULT_REGION });
@@ -85,6 +87,8 @@ import { Haiku } from './classes';
               return JSON.parse(Item?.installation.S);
             }
           }
+
+          return null;
         } catch {
           throw new Error('Failed fetching installation');
         }
@@ -106,7 +110,7 @@ import { Haiku } from './classes';
     }
   });
 
-  const port = process.env.PORT ? Number.parseInt(process.env.PORT) : 3000;
+  const port = process.env.PORT ? Number.parseInt(process.env.PORT, 10) : 3000;
 
   await app.start(port);
   console.log('⚡️ Bolt app is running!');

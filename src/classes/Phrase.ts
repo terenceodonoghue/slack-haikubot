@@ -2,25 +2,26 @@ import { syllables } from '../utils';
 
 class Phrase {
   private _maxLength: number;
+
   private _phrase: string[] = [];
 
   constructor(maxLength: number) {
     this._maxLength = maxLength;
   }
 
-  get length() {
+  get length(): number {
     return syllables(this.toString());
   }
 
-  get maxLength() {
+  get maxLength(): number {
     return this._maxLength;
   }
 
-  public insert = (word: string) => this._phrase.push(word);
+  public insert = (word: string): number => this._phrase.push(word);
 
-  public isValid = () => this.length === this.maxLength;
+  public isValid = (): boolean => this.length === this.maxLength;
 
-  public toString = () => this._phrase.join(' ');
+  public toString = (): string => this._phrase.join(' ');
 }
 
 export default Phrase;
