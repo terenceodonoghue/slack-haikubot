@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup
+        uses: actions/setup-node@v1
+        with:
+          always-auth: true
+          node-version: '14.x'
+      - name: Install
+        run: |
+          yarn install
+      - name: Lint
+        if: success()
+        run: yarn lint
