@@ -1,4 +1,4 @@
-import { syllables } from '../utils';
+import { checkLine } from '../utils';
 
 class Phrase {
   private _maxLength: number;
@@ -10,7 +10,7 @@ class Phrase {
   }
 
   get length(): number {
-    return syllables(this.toString());
+    return checkLine(this.toString());
   }
 
   get maxLength(): number {

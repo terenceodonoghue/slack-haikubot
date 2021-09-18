@@ -102,8 +102,6 @@ dotenv.config();
       // @ts-ignore
       const haiku = new Haiku(message.text, message.user);
 
-      console.log(haiku.toString());
-
       if (haiku.isValid()) {
         await say(haiku.toString());
       }

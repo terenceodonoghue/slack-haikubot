@@ -1,5 +1,5 @@
 import Phrase from './Phrase';
-import { syllables } from '../utils';
+import { checkLine } from '../utils';
 
 const MAX_SYLLABLE_LENGTH = 17;
 
@@ -11,7 +11,7 @@ class Haiku {
   constructor(message: string, author: string) {
     if (!Haiku.validate(message))
       throw new Error(
-        `Incorrect syllable count, expected ${MAX_SYLLABLE_LENGTH}, received ${syllables(
+        `Incorrect syllable count, expected ${MAX_SYLLABLE_LENGTH}, received ${checkLine(
           message,
         )}`,
       );
@@ -41,7 +41,7 @@ class Haiku {
   };
 
   public static validate = (message: string): boolean =>
-    syllables(message) === MAX_SYLLABLE_LENGTH;
+    checkLine(message) === MAX_SYLLABLE_LENGTH;
 }
 
 export default Haiku;
